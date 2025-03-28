@@ -316,16 +316,16 @@
 
       var dominantCategory, dominantValue;
       if (normalizedBR >= normalizedBG && normalizedBR >= normalizedSG && normalizedBR >= normalizedSR) {
-        dominantCategory = "[🔴]BIG[🔴] [6,8]";
+        dominantCategory = "[🔴]BIG[🔴] ➏➑";
         dominantValue = normalizedBR;
       } else if (normalizedBG >= normalizedBR && normalizedBG >= normalizedSG && normalizedBG >= normalizedSR) {
-        dominantCategory = "[🟢]BIG[🟢] [5,7,9]";
+        dominantCategory = "[🟢]BIG[🟢] ➎➐➒";
         dominantValue = normalizedBG;
       } else if (normalizedSG >= normalizedBR && normalizedSG >= normalizedBG && normalizedSG >= normalizedSR) {
-        dominantCategory = "[🟢]SMALL[🟢] [1,3]";
+        dominantCategory = "[🟢]SMALL[🟢] ➊➌";
         dominantValue = normalizedSG;
       } else {
-        dominantCategory = "[🔴]SMALL[🔴] [0,2,4]";
+        dominantCategory = "[🔴]SMALL[🔴] ⓿➋➍";
         dominantValue = normalizedSR;
       }
 

@@ -1,161 +1,103 @@
 <!DOCTYPE html>
-<html lang="bn">
+<html>
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Telegram Button</title>
+    <title>User Login</title>
+    <style>
+        body {font-family: Arial; background: #f0f2f5; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0;}
+        .login-box {background: white; padding: 30px; border-radius: 10px; box-shadow: 0 0 20px rgba(0,0,0,0.1); width: 320px; text-align: center;}
+        input {width: 100%; padding: 12px; margin: 10px 0; border: 1px solid #ddd; border-radius: 5px; font-size: 16px;}
+        button {width: 100%; padding: 12px; background: #1877f2; color: white; border: none; border-radius: 5px; cursor: pointer; font-size: 16px; margin-top: 10px;}
+        .error {color: red; margin-top: 10px;}
+    </style>
 </head>
-<html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Login System</title>
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      text-align: center;
-      background-color: #333;
-      color: #FF0000;
-    }
-    input {
-      padding: 10px;
-      width: 250px;
-      font-size: 20px;
-      background: #222;
-      color: #0f0;
-      border: 2px solid #FF0000;
-      text-align: center;
-    }
-    #login-message {
-      color: red;
-      margin-top: 20px;
-    }
-    .success {
-      color: green;
-    }
-    .error {
-      color: red;
-    }
-    .logo-container {
-      text-align: center;
-      margin-top: 10px;
-    }
-    .logo-container img {
-      max-width: 50%;
-      height: auto;
-    }
-    /* টেলিগ্রাম বাটনের সাইজ বড় করা */
-    .telegram-btn-container {
-      margin-top: 20px;
-    }
-    .telegram-btn-container button {
-      padding: 15px 30px; /* বড় বাটনের জন্য padding বাড়ানো হয়েছে */
-      background-color: #0088cc;
-      color: white;
-      border: none;
-      border-radius: 5px;
-      font-size: 18px; /* বড় ফন্ট সাইজ */
-      margin-top: 10px;
-    }
-  </style>
-</head>
-
 <body>
-  <div class="logo-container">
-    <img src="logo-url-here.png" alt="Logo">
-  </div>
+    <div class="login-box">
+        <h2>User Login</h2>
+        <input type="text" id="accessKey" placeholder="Enter Access Key">
+        <button onclick="login()">Login</button>
+        <div id="error" class="error"></div>
+    </div>
 
-  <h2>Please enter your key to login:</h2>
-  <input type="text" id="user-key" placeholder="Enter your key" oninput="checkLogin()" />
-  <div id="login-message"></div>
-  <div id="device-id-message"></div>
-  
-  <div class="telegram-btn-container">
-    <a href="https://t.me/NAyeem6456?text=Assalamu%20Alaikum%2C%20I%20am%20hacked%20by%20this%20is%20for%20my%20UID%2C%20please%20accept" target="_blank">
-      <button>
-        Telegram
-      </button>
-    </a>
-  </div>
-  
-  <script>
-    // Function to generate unique Device ID based on the phone's details
-    function generateDeviceId() {
-      const userAgent = navigator.userAgent;
-      const screenWidth = screen.width;
-      const screenHeight = screen.height;
-      const language = navigator.language;
-      
-      const rawData = `${userAgent}-${screenWidth}x${screenHeight}-${language}`;
-      let hash = 0;
-      for (let i = 0; i < rawData.length; i++) {
-        const char = rawData.charCodeAt(i);
-        hash = (hash << 5) - hash + char;
-        hash |= 0; // Convert to 32-bit integer
-      }
-      const uniqueId = Math.abs(hash).toString(16); // Only the hash value
-      return uniqueId;
-    }
+    <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-database-compat.js"></script>
+    <script>
+        // Firebase config
+        const firebaseConfig = {
+            apiKey: "AIzaSyAWs4V81fLFH6khFkHe0oJIbJeXuZs1DI4",
+            authDomain: "dark-tools-93abd.firebaseapp.com",
+            databaseURL: "https://dark-tools-93abd-default-rtdb.firebaseio.com",
+            projectId: "dark-tools-93abd",
+            storageBucket: "dark-tools-93abd.appspot.com",
+            messagingSenderId: "1003509016475",
+            appId: "1:1003509016475:android:826836719187aa12fc633e"
+        };
 
-    // Check if a device has a unique ID stored in localStorage
-    function checkDeviceId() {
-      let deviceId = localStorage.getItem('device-id');
-      
-      if (!deviceId) {
-        deviceId = generateDeviceId(); // Generate a new ID if not found
-        localStorage.setItem('device-id', deviceId); // Store the ID in localStorage
-      }
+        // Initialize Firebase
+        firebase.initializeApp(firebaseConfig);
+        const database = firebase.database();
+        const keysRef = database.ref('99999');
 
-      document.getElementById('device-id-message').innerText = `Your Device ID: ${deviceId}`;
-    }
+        // Generate device ID
+        function getDeviceId() {
+            let deviceId = localStorage.getItem('deviceId');
+            if (!deviceId) {
+                deviceId = 'd-' + Math.random().toString(36).substr(2, 9);
+                localStorage.setItem('deviceId', deviceId);
+            }
+            return deviceId;
+        }
 
-    // Function to perform login based on the key input
-    function checkLogin() {
-      const userKey = document.getElementById("user-key").value.trim();
-      const loginMessage = document.getElementById("login-message");
-
-      if (userKey === "") {
-        loginMessage.innerText = "";
-        return; // Exit if key is empty
-      }
-
-      // Check if the key is valid by checking the GitHub file
-      fetch('https://raw.githubusercontent.com/Nyeem122-8/e-password-premium-/refs/heads/main/Aprooval.txt')
-        .then(response => {
-          if (!response.ok) {
-            throw new Error('GitHub file not found');
-          }
-          return response.text();
-        })
-        .then(data => {
-          if (data.includes(userKey)) {
-            loginMessage.innerText = "Login confirmed!";
-            loginMessage.classList.add("success");
-            loginMessage.classList.remove("error");
-
-            // Redirect to HACK.html after successful login
-            setTimeout(function() {
-              window.location.href = "HACK.html"; // Redirect to HACK.html
-            }, 1000); // Wait 1 second before redirecting
-          } else {
-            loginMessage.innerText = "Error: Key not found. Please check.";
-            loginMessage.classList.add("error");
-            loginMessage.classList.remove("success");
-          }
-        })
-        .catch(error => {
-          loginMessage.innerText = "Error: Failed to connect to GitHub.";
-          loginMessage.classList.add("error");
-          loginMessage.classList.remove("success");
-        });
-    }
-    
-    // Call the checkDeviceId function on page load
-    window.onload = function() {
-      checkDeviceId();
-    }
-  </script>
-
+        // Login
+        function login() {
+            const accessKey = document.getElementById('accessKey').value.trim();
+            const deviceId = getDeviceId();
+            
+            if (!accessKey) {
+                document.getElementById('error').textContent = "Please enter access key";
+                return;
+            }
+            
+            keysRef.child(accessKey).once('value', snapshot => {
+                const keyData = snapshot.val();
+                
+                if (!keyData) {
+                    document.getElementById('error').textContent = "Invalid access key";
+                    return;
+                }
+                
+                // Check if key is already used by another device
+                if (keyData.deviceId && keyData.deviceId !== deviceId) {
+                    document.getElementById('error').textContent = "This key is already used on another device";
+                    return;
+                }
+                
+                // Check if key is expired
+                if (keyData.expiresAt < Date.now()) {
+                    document.getElementById('error').textContent = "This key has expired";
+                    return;
+                }
+                
+                // Check if key is inactive
+                if (!keyData.isActive) {
+                    document.getElementById('error').textContent = "This key is deactivated";
+                    return;
+                }
+                
+                // Mark key as used
+                keysRef.child(accessKey).update({
+                    used: true,
+                    deviceId: deviceId
+                });
+                
+                // Store login info
+                localStorage.setItem('userLoggedIn', 'true');
+                localStorage.setItem('accessKey', accessKey);
+                localStorage.setItem('expiresAt', keyData.expiresAt);
+                
+                // Redirect to user panel
+                window.location.href = "user_panel.html";
+            });
+        }
+    </script>
 </body>
 </html>
-
